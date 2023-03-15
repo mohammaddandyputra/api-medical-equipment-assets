@@ -19,7 +19,11 @@ import { MedicalEquipmentModule } from './medical_equipments/medical_equipments.
 import { Complain } from './complains/models/complain.model';
 import { ComplainModule } from './complains/complains.module';
 import { Repair } from './repairs/models/repair.model';
+import { RepairAction } from './repairs/models/repair_action.model';
 import { RepairModule } from './repairs/repairs.module';
+import { Maintenance } from './maintenances/models/maintenance.model';
+import { MaintenanceAction } from './maintenances/models/maintenance_actions.model';
+import { MaintenanceModule } from './maintenances/maintenances.module';
 
 @Module({
   imports: [
@@ -45,6 +49,9 @@ import { RepairModule } from './repairs/repairs.module';
           MedicalEquipmentAccessories,
           Complain,
           Repair,
+          RepairAction,
+          Maintenance,
+          MaintenanceAction,
         ],
       }),
       inject: [ConfigService],
@@ -57,6 +64,7 @@ import { RepairModule } from './repairs/repairs.module';
     MedicalEquipmentModule,
     ComplainModule,
     RepairModule,
+    MaintenanceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

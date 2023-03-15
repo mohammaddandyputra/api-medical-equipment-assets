@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
-export class CreateComplainDTO {
+export class CreateMaintenanceDTO {
   @ApiProperty({
     description: 'medical equipment id',
   })
@@ -17,16 +17,30 @@ export class CreateComplainDTO {
   user_id: string;
 
   @ApiProperty({
-    description: 'complain date',
+    description: 'maintenance date',
   })
   @IsNotEmpty()
-  complain_date: Date;
+  maintenance_date: Date;
 
-  @ApiProperty({
-    description: 'priority',
+  @ApiPropertyOptional({
+    description: 'temperature',
   })
-  @IsNotEmpty()
-  priority: boolean;
+  temperature?: string;
+
+  @ApiPropertyOptional({
+    description: 'humidity',
+  })
+  humidity?: string;
+
+  @ApiPropertyOptional({
+    description: 'electricity',
+  })
+  electricity?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'condition',
+  })
+  condition?: string;
 
   @ApiPropertyOptional({
     description: 'note',
@@ -34,28 +48,43 @@ export class CreateComplainDTO {
   note?: string;
 }
 
-export class UpdateComplainDTO {
+export class UpdateMaintenanceDTO {
   @ApiPropertyOptional({
     description: 'medical equipment id',
   })
   @IsUUID()
-  medical_equipment?: string;
+  medical_equipment: string;
 
   @ApiPropertyOptional({
     description: 'user id',
   })
   @IsUUID()
-  user_id?: string;
+  user_id: string;
 
   @ApiPropertyOptional({
-    description: 'complain date',
+    description: 'maintenance date',
   })
-  complain_date?: Date;
+  maintenance_date: Date;
 
   @ApiPropertyOptional({
-    description: 'priority',
+    description: 'temperature',
   })
-  priority?: boolean;
+  temperature?: string;
+
+  @ApiPropertyOptional({
+    description: 'humidity',
+  })
+  humidity?: string;
+
+  @ApiPropertyOptional({
+    description: 'electricity',
+  })
+  electricity?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'condition',
+  })
+  condition?: string;
 
   @ApiPropertyOptional({
     description: 'note',

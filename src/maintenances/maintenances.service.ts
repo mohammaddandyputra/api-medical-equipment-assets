@@ -3,36 +3,38 @@ import { InjectModel } from '@nestjs/sequelize';
 import { FindOptions, FindAndCountOptions } from 'sequelize/types';
 import { IGenericService } from 'src/common/interfaces';
 import { PaginationResult } from 'src/common/types';
-import { Complain } from './models/complain.model';
+import { Maintenance } from './models/maintenance.model';
 
 @Injectable()
-export class ComplainService implements IGenericService<Complain> {
+export class MaintenanceService implements IGenericService<Maintenance> {
   constructor(
-    @InjectModel(Complain)
-    private readonly complainModel: typeof Complain,
+    @InjectModel(Maintenance)
+    private readonly maintenanceModel: typeof Maintenance,
   ) {}
 
   async get(
-    options: FindOptions<Complain>,
+    options: FindOptions<Maintenance>,
     scopes?: Array<string>,
-  ): Promise<Complain> {
-    return this.complainModel.scope(scopes ?? 'defaultScope').findOne(options);
+  ): Promise<Maintenance> {
+    return this.maintenanceModel
+      .scope(scopes ?? 'defaultScope')
+      .findOne(options);
   }
 
   async getAll(
-    options: FindAndCountOptions<Complain>,
+    options: FindAndCountOptions<Maintenance>,
     scopes?: Array<string>,
-  ): Promise<PaginationResult<Complain>> {
-    return this.complainModel
+  ): Promise<PaginationResult<Maintenance>> {
+    return this.maintenanceModel
       .scope(scopes ?? 'defaultScope')
       .findAndCountAll(options);
   }
 
   async create(
-    values: Partial<Complain>,
+    values: Partial<Maintenance>,
     scopes?: Array<string>,
-  ): Promise<Complain> {
-    const data = await this.complainModel
+  ): Promise<Maintenance> {
+    const data = await this.maintenanceModel
       .scope(scopes ?? 'defaultScope')
       .build(values)
       .save();
@@ -41,11 +43,11 @@ export class ComplainService implements IGenericService<Complain> {
   }
 
   async update(
-    values: Partial<Complain>,
-    options: FindOptions<Complain>,
+    values: Partial<Maintenance>,
+    options: FindOptions<Maintenance>,
     scopes?: Array<string>,
-  ): Promise<Complain> {
-    const data = await this.complainModel
+  ): Promise<Maintenance> {
+    const data = await this.maintenanceModel
       .scope(scopes ?? 'defaultScope')
       .findOne(options);
 

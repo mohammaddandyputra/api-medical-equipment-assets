@@ -23,16 +23,16 @@ import { FilterIdDTO, ResponseDTO } from 'src/common/dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserRole } from 'src/common/enums';
 import { RoleGuard } from '../common/guards/role.guard';
-import { CreateComplainDTO, UpdateComplainDTO } from './dto';
-import { ComplainService } from './complains.service';
+import { CreateMaintenanceDTO, UpdateMaintenanceDTO } from './dto';
+import { MaintenanceService } from './maintenances.service';
 
-@ApiTags('complains')
-@Controller('complains')
-export class ComplainController {
-  constructor(private readonly complainService: ComplainService) {}
+@ApiTags('maintenances')
+@Controller('maintenances')
+export class MaintenanceController {
+  constructor(private readonly maintenanceService: MaintenanceService) {}
 
   @ApiOperation({
-    summary: 'Create Complain',
+    summary: 'Create Maintenance',
   })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
@@ -41,8 +41,8 @@ export class ComplainController {
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
   @Post()
-  async create(@Body() body: CreateComplainDTO): Promise<ResponseDTO> {
-    const data = await this.complainService.create(
+  async create(@Body() body: CreateMaintenanceDTO): Promise<ResponseDTO> {
+    const data = await this.maintenanceService.create(
       {
         ...body,
       },
@@ -56,7 +56,7 @@ export class ComplainController {
   }
 
   @ApiOperation({
-    summary: 'Update Complain',
+    summary: 'Update Maintenance',
   })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
@@ -67,11 +67,11 @@ export class ComplainController {
   @Patch(':id')
   async update(
     @Param() param: FilterIdDTO,
-    @Body() body: UpdateComplainDTO,
+    @Body() body: UpdateMaintenanceDTO,
   ): Promise<ResponseDTO> {
     const { id } = param;
 
-    const data = await this.complainService.update(
+    const data = await this.maintenanceService.update(
       {
         ...body,
       },
@@ -90,7 +90,7 @@ export class ComplainController {
   }
 
   @ApiOperation({
-    summary: 'List Complain',
+    summary: 'List Maintenance',
   })
   // @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
@@ -102,7 +102,7 @@ export class ComplainController {
   async getAll(@Query() query: any): Promise<ResponseDTO> {
     const { limit, offset, order } = query;
 
-    const data = await this.complainService.getAll(
+    const data = await this.maintenanceService.getAll(
       {
         limit,
         offset,
@@ -118,7 +118,7 @@ export class ComplainController {
   }
 
   @ApiOperation({
-    summary: 'Get Complain',
+    summary: 'Get Maintenance',
   })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
@@ -130,7 +130,7 @@ export class ComplainController {
   async get(@Param() param: FilterIdDTO): Promise<ResponseDTO> {
     const { id } = param;
 
-    const data = await this.complainService.get(
+    const data = await this.maintenanceService.get(
       {
         where: {
           id,
@@ -140,7 +140,7 @@ export class ComplainController {
     );
 
     if (!data) {
-      throw new NotFoundException('Complain not found!');
+      throw new NotFoundException('Maintenance not found!');
     }
 
     return {
