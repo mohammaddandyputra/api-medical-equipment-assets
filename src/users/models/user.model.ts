@@ -2,21 +2,22 @@ import * as bcrypt from 'bcrypt';
 import {
   BelongsTo,
   Column,
+  DataType,
   Default,
   ForeignKey,
   Model,
+  PrimaryKey,
   Scopes,
   Table,
   Unique,
   Validate,
 } from 'sequelize-typescript';
-import { UserStatus } from 'src/common/enums';
 import { Role } from 'src/roles/models/roles.model';
 
 @Scopes(() => ({
   withoutTimestamp: {
     attributes: {
-      exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+      exclude: ['created_at', 'updated_at', 'deleted_at'],
     },
   },
   withoutPassword: {
@@ -32,7 +33,7 @@ import { Role } from 'src/roles/models/roles.model';
       model: Role,
       as: 'role',
       attributes: {
-        exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+        exclude: ['created_at', 'updated_at', 'deleted_at'],
       },
     },
   },
@@ -43,8 +44,13 @@ import { Role } from 'src/roles/models/roles.model';
   paranoid: true,
 })
 export class User extends Model {
+  @PrimaryKey
+  @Default(DataType.UUIDV4)
+  @Column(DataType.UUID)
+  id: string;
+
   @Column
-  fullname: string;
+  name: string;
 
   @Unique
   @Validate({
@@ -62,12 +68,11 @@ export class User extends Model {
     this.setDataValue('password', bcrypt.hashSync(value, 10));
   }
 
-  @Default(UserStatus.NEW)
   @Column
-  status: string;
+  position: string;
 
   @ForeignKey(() => Role)
-  @Default(2)
+  @Default('a5dce09f-d834-4de7-859e-304cc6afa37d')
   @Column
   role_id: number;
 

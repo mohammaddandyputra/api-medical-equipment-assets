@@ -15,7 +15,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ResponseDTO } from 'src/common/dto';
-import { UsersService } from 'src/users/users.service';
+import { UserService } from 'src/users/users.service';
 import { LoginDTO, RegisterDTO } from './dto';
 import * as bcrypt from 'bcrypt';
 import * as JWT from 'jsonwebtoken';
@@ -24,7 +24,7 @@ import * as _ from 'lodash';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private usersService: UsersService) {}
+  constructor(private userService: UserService) {}
 
   @ApiOperation({
     summary: 'Auth Login',
@@ -36,7 +36,7 @@ export class AuthController {
   @Post('login')
   async login(@Body() body: LoginDTO): Promise<ResponseDTO> {
     const { email, password } = body;
-    const user = await this.usersService.get({ where: { email } }, [
+    const user = await this.userService.get({ where: { email } }, [
       'withoutTimestamp',
       'withRole',
     ]);
@@ -70,7 +70,7 @@ export class AuthController {
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @Post('/register')
   async register(@Body() body: RegisterDTO): Promise<ResponseDTO> {
-    const data = await this.usersService.create(
+    const data = await this.userService.create(
       {
         ...body,
       },
@@ -78,7 +78,7 @@ export class AuthController {
     );
 
     return {
-      statusCode: HttpStatus.OK,
+      statusCode: HttpStatus.CREATED,
       data,
     };
   }

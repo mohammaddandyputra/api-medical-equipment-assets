@@ -23,16 +23,16 @@ import { FilterIdDTO, ResponseDTO } from 'src/common/dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserRole } from 'src/common/enums';
 import { RoleGuard } from '../common/guards/role.guard';
-import { CreateUserDTO, UpdateUserDTO } from './dto';
-import { UserService } from './users.service';
+import { CreateRoomDTO, UpdateRoomDTO } from './dto';
+import { RoomService } from './rooms.service';
 
-@ApiTags('users')
-@Controller('users')
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+@ApiTags('rooms')
+@Controller('rooms')
+export class RoomController {
+  constructor(private readonly roomService: RoomService) {}
 
   @ApiOperation({
-    summary: 'Create User',
+    summary: 'Create Room',
   })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
@@ -41,12 +41,12 @@ export class UserController {
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
   @Post()
-  async create(@Body() body: CreateUserDTO): Promise<ResponseDTO> {
-    const data = await this.userService.create(
+  async create(@Body() body: CreateRoomDTO): Promise<ResponseDTO> {
+    const data = await this.roomService.create(
       {
         ...body,
       },
-      ['withoutPassword', 'withRole'],
+      ['withoutTimestamp'],
     );
 
     return {
@@ -56,7 +56,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    summary: 'Update User',
+    summary: 'Update Room',
   })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
@@ -67,11 +67,11 @@ export class UserController {
   @Patch(':id')
   async update(
     @Param() param: FilterIdDTO,
-    @Body() body: UpdateUserDTO,
+    @Body() body: UpdateRoomDTO,
   ): Promise<ResponseDTO> {
     const { id } = param;
 
-    const data = await this.userService.update(
+    const data = await this.roomService.update(
       {
         ...body,
       },
@@ -80,7 +80,7 @@ export class UserController {
           id,
         },
       },
-      ['withoutPassword', 'withRole'],
+      ['withoutTimestamp'],
     );
 
     return {
@@ -90,25 +90,25 @@ export class UserController {
   }
 
   @ApiOperation({
-    summary: 'List User',
+    summary: 'List Room',
   })
-  @ApiBearerAuth()
+  // @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
+  // @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
   @Get()
   async getAll(@Query() query: any): Promise<ResponseDTO> {
     const { limit, offset, order } = query;
 
-    const data = await this.userService.getAll(
+    const data = await this.roomService.getAll(
       {
         limit,
         offset,
         order,
       },
-      ['withoutPassword', 'withRole'],
+      ['withoutTimestamp', 'withFloor'],
     );
 
     return {
@@ -118,7 +118,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    summary: 'Get User',
+    summary: 'Get Room',
   })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
@@ -130,17 +130,17 @@ export class UserController {
   async get(@Param() param: FilterIdDTO): Promise<ResponseDTO> {
     const { id } = param;
 
-    const data = await this.userService.get(
+    const data = await this.roomService.get(
       {
         where: {
           id,
         },
       },
-      ['withoutPassword', 'withRole'],
+      ['withoutTimestamp', 'withFloor'],
     );
 
     if (!data) {
-      throw new NotFoundException('User not found!');
+      throw new NotFoundException('Room not found!');
     }
 
     return {

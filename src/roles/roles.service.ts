@@ -6,7 +6,7 @@ import { PaginationResult } from 'src/common/types';
 import { Role } from './models/roles.model';
 
 @Injectable()
-export class RolesService implements IGenericService<Role> {
+export class RoleService implements IGenericService<Role> {
   constructor(
     @InjectModel(Role)
     private readonly roleModel: typeof Role,

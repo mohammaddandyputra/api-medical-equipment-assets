@@ -21,7 +21,7 @@ export class RegisterDTO {
     description: 'fullname',
   })
   @IsNotEmpty()
-  fullname: string;
+  name: string;
 
   @ApiProperty({
     description: 'email',

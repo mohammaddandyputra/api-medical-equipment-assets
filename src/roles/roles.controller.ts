@@ -22,14 +22,14 @@ import {
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { FilterIdDTO, ResponseDTO } from 'src/common/dto';
 import { CreateRoleDTO, UpdateRoleDTO } from './dto';
-import { RolesService } from './roles.service';
+import { RoleService } from './roles.service';
 import { RoleGuard } from '../common/guards/role.guard';
 import { UserRole } from 'src/common/enums';
 
 @ApiTags('roles')
 @Controller('roles')
-export class RolesController {
-  constructor(private readonly rolesService: RolesService) {}
+export class RoleController {
+  constructor(private readonly roleService: RoleService) {}
 
   @ApiOperation({
     summary: 'Create Role',
@@ -42,7 +42,7 @@ export class RolesController {
   @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN))
   @Post()
   async create(@Body() body: CreateRoleDTO): Promise<ResponseDTO> {
-    const data = await this.rolesService.create(body);
+    const data = await this.roleService.create(body);
 
     return {
       statusCode: HttpStatus.CREATED,
@@ -66,7 +66,7 @@ export class RolesController {
   ): Promise<ResponseDTO> {
     const { id } = param;
 
-    const data = await this.rolesService.update(body, {
+    const data = await this.roleService.update(body, {
       where: {
         id,
       },
@@ -91,7 +91,7 @@ export class RolesController {
   async getAll(@Query() query: any): Promise<ResponseDTO> {
     const { limit, offset, order, ...filter } = query;
 
-    const data = await this.rolesService.getAll({
+    const data = await this.roleService.getAll({
       where: {
         ...filter,
       },
@@ -119,14 +119,14 @@ export class RolesController {
   async get(@Param() param: FilterIdDTO): Promise<ResponseDTO> {
     const { id } = param;
 
-    const data = await this.rolesService.get({
+    const data = await this.roleService.get({
       where: {
         id,
       },
     });
 
     if (!data) {
-      throw new NotFoundException('role not found');
+      throw new NotFoundException('Role Not Found');
     }
 
     return {

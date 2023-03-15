@@ -3,30 +3,30 @@ import { InjectModel } from '@nestjs/sequelize';
 import { FindOptions, FindAndCountOptions } from 'sequelize/types';
 import { IGenericService } from 'src/common/interfaces';
 import { PaginationResult } from 'src/common/types';
-import { User } from './models/user.model';
+import { Room } from './models/room.model';
 
 @Injectable()
-export class UserService implements IGenericService<User> {
+export class RoomService implements IGenericService<Room> {
   constructor(
-    @InjectModel(User)
-    private readonly userModel: typeof User,
+    @InjectModel(Room)
+    private readonly roomModel: typeof Room,
   ) {}
 
-  async get(options: FindOptions<User>, scopes?: Array<string>): Promise<User> {
-    return this.userModel.scope(scopes ?? 'defaultScope').findOne(options);
+  async get(options: FindOptions<Room>, scopes?: Array<string>): Promise<Room> {
+    return this.roomModel.scope(scopes ?? 'defaultScope').findOne(options);
   }
 
   async getAll(
-    options: FindAndCountOptions<User>,
+    options: FindAndCountOptions<Room>,
     scopes?: Array<string>,
-  ): Promise<PaginationResult<User>> {
-    return this.userModel
+  ): Promise<PaginationResult<Room>> {
+    return this.roomModel
       .scope(scopes ?? 'defaultScope')
       .findAndCountAll(options);
   }
 
-  async create(values: Partial<User>, scopes?: Array<string>): Promise<User> {
-    const data = await this.userModel
+  async create(values: Partial<Room>, scopes?: Array<string>): Promise<Room> {
+    const data = await this.roomModel
       .scope(scopes ?? 'defaultScope')
       .build(values)
       .save();
@@ -35,11 +35,11 @@ export class UserService implements IGenericService<User> {
   }
 
   async update(
-    values: Partial<User>,
-    options: FindOptions<User>,
+    values: Partial<Room>,
+    options: FindOptions<Room>,
     scopes?: Array<string>,
-  ): Promise<User> {
-    const data = await this.userModel
+  ): Promise<Room> {
+    const data = await this.roomModel
       .scope(scopes ?? 'defaultScope')
       .findOne(options);
 

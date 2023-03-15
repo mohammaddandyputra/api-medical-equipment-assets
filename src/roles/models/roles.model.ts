@@ -1,4 +1,13 @@
-import { Column, HasMany, Model, Scopes, Table } from 'sequelize-typescript';
+import {
+  Column,
+  DataType,
+  Default,
+  HasMany,
+  Model,
+  PrimaryKey,
+  Scopes,
+  Table,
+} from 'sequelize-typescript';
 import { User } from 'src/users/models/user.model';
 
 @Scopes(() => ({
@@ -14,6 +23,11 @@ import { User } from 'src/users/models/user.model';
   paranoid: true,
 })
 export class Role extends Model {
+  @PrimaryKey
+  @Default(DataType.UUIDV4)
+  @Column(DataType.UUID)
+  id: string;
+
   @Column
   name: string;
 

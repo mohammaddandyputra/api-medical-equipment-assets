@@ -6,7 +6,7 @@ export class CreateUserDTO {
     description: 'fullname',
   })
   @IsNotEmpty()
-  fullname: string;
+  name: string;
 
   @ApiProperty({
     description: 'email',
