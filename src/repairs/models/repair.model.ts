@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript';
 import { User } from 'src/users/models/user.model';
 import { Complain } from 'src/complains/models/complain.model';
+import { MedicalEquipment } from 'src/medical_equipments/models/medical_equipment.model';
 
 @Scopes(() => ({
   withoutTimestamp: {
@@ -36,6 +37,10 @@ export class Repair extends Model {
   @ForeignKey(() => User)
   @Column(DataType.UUID)
   user_id: string;
+
+  @ForeignKey(() => MedicalEquipment)
+  @Column(DataType.UUID)
+  medical_equipment_id: string;
 
   @Column
   repair_date: Date;

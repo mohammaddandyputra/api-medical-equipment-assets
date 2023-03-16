@@ -7,20 +7,7 @@ export class CreateComplainDTO {
   })
   @IsUUID()
   @IsNotEmpty()
-  medical_equipment: string;
-
-  @ApiProperty({
-    description: 'user id',
-  })
-  @IsUUID()
-  @IsNotEmpty()
-  user_id: string;
-
-  @ApiProperty({
-    description: 'complain date',
-  })
-  @IsNotEmpty()
-  complain_date: Date;
+  medical_equipment_id: string;
 
   @ApiProperty({
     description: 'priority',
@@ -39,18 +26,7 @@ export class UpdateComplainDTO {
     description: 'medical equipment id',
   })
   @IsUUID()
-  medical_equipment?: string;
-
-  @ApiPropertyOptional({
-    description: 'user id',
-  })
-  @IsUUID()
-  user_id?: string;
-
-  @ApiPropertyOptional({
-    description: 'complain date',
-  })
-  complain_date?: Date;
+  medical_equipment_id?: string;
 
   @ApiPropertyOptional({
     description: 'priority',

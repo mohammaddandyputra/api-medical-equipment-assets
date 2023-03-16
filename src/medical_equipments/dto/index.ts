@@ -59,7 +59,7 @@ export class CreateMedicalEquipmentDTO {
   @ApiPropertyOptional({
     description: 'operating year',
   })
-  operating_year?: Date;
+  operating_year?: string;
 }
 
 export class UpdateMedicalEquipmentDTO {
@@ -118,5 +118,5 @@ export class UpdateMedicalEquipmentDTO {
   @ApiPropertyOptional({
     description: 'operating year',
   })
-  operating_year?: Date;
+  operating_year?: string;
 }

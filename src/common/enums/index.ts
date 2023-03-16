@@ -1,6 +1,13 @@
 export enum UserRole {
-  ADMIN = 'admin',
-  USER = 'user',
+  ADMIN = 'ADMIN',
+  TECHNICIAN = 'TECHNICIAN',
+  USER = 'USER',
+}
+
+export enum Condition {
+  BAIK = 'BAIK',
+  RUSAK_RINGAN = 'RUSAK RINGAN',
+  RUSAK_BERAT = 'RUSAK BERAT',
 }
 
 export enum UserStatus {

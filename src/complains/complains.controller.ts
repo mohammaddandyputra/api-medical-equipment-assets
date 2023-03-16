@@ -25,6 +25,8 @@ import { UserRole } from 'src/common/enums';
 import { RoleGuard } from '../common/guards/role.guard';
 import { CreateComplainDTO, UpdateComplainDTO } from './dto';
 import { ComplainService } from './complains.service';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import * as moment from 'moment';
 
 @ApiTags('complains')
 @Controller('complains')
@@ -41,10 +43,15 @@ export class ComplainController {
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
   @Post()
-  async create(@Body() body: CreateComplainDTO): Promise<ResponseDTO> {
+  async create(
+    @Body() body: CreateComplainDTO,
+    @CurrentUser() user: any,
+  ): Promise<ResponseDTO> {
     const data = await this.complainService.create(
       {
         ...body,
+        user_id: user.id,
+        complain_date: new Date(moment().format()),
       },
       ['withoutTimestamp'],
     );
@@ -92,12 +99,12 @@ export class ComplainController {
   @ApiOperation({
     summary: 'List Complain',
   })
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  // @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
+  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
   @Get()
   async getAll(@Query() query: any): Promise<ResponseDTO> {
     const { limit, offset, order } = query;

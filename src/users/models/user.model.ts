@@ -17,7 +17,7 @@ import { Role } from 'src/roles/models/roles.model';
 @Scopes(() => ({
   withoutTimestamp: {
     attributes: {
-      exclude: ['created_at', 'updated_at', 'deleted_at'],
+      exclude: ['createdAt', 'updatedAt', 'deletedAt'],
     },
   },
   withoutPassword: {
@@ -30,11 +30,8 @@ import { Role } from 'src/roles/models/roles.model';
       exclude: ['role_id'],
     },
     include: {
-      model: Role,
+      model: Role.scope(['withoutTimestamp']),
       as: 'role',
-      attributes: {
-        exclude: ['created_at', 'updated_at', 'deleted_at'],
-      },
     },
   },
 }))

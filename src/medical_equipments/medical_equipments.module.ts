@@ -9,10 +9,17 @@ import { MedicalEquipment } from './models/medical_equipment.model';
 import { MedicalEquipmentAccessories } from './models/medical_equipment_accessories.model';
 import { MedicalEquipmentService } from './medical_equipments.service';
 import { MedicalEquipmentController } from './medical_equipments.controller';
+import { Maintenance } from 'src/maintenances/models/maintenance.model';
+import { Complain } from 'src/complains/models/complain.model';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([MedicalEquipment, MedicalEquipmentAccessories]),
+    SequelizeModule.forFeature([
+      MedicalEquipment,
+      MedicalEquipmentAccessories,
+      Maintenance,
+      Complain,
+    ]),
     MulterModule.register({
       storage: diskStorage({
         destination: (_req, _file, cb) => {

@@ -25,11 +25,17 @@ import { UserRole } from 'src/common/enums';
 import { RoleGuard } from '../common/guards/role.guard';
 import { CreateRepairDTO, UpdateRepairDTO } from './dto';
 import { RepairService } from './repairs.service';
+import * as moment from 'moment';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { ComplainService } from 'src/complains/complains.service';
 
 @ApiTags('repairs')
 @Controller('repairs')
 export class RepairController {
-  constructor(private readonly repairService: RepairService) {}
+  constructor(
+    private readonly repairService: RepairService,
+    private readonly complainService: ComplainService,
+  ) {}
 
   @ApiOperation({
     summary: 'Create Repair',
@@ -39,12 +45,23 @@ export class RepairController {
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
+  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN))
   @Post()
-  async create(@Body() body: CreateRepairDTO): Promise<ResponseDTO> {
+  async create(
+    @Body() body: CreateRepairDTO,
+    @CurrentUser() user: any,
+  ): Promise<ResponseDTO> {
+    const { complain_id } = body;
+    const complain = await this.complainService.get({
+      where: { id: complain_id },
+    });
+
     const data = await this.repairService.create(
       {
         ...body,
+        medical_equipment_id: complain.medical_equipment_id,
+        user_id: user.id,
+        repair_date: new Date(moment().format()),
       },
       ['withoutTimestamp'],
     );
@@ -63,7 +80,7 @@ export class RepairController {
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
+  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN))
   @Patch(':id')
   async update(
     @Param() param: FilterIdDTO,
@@ -92,12 +109,12 @@ export class RepairController {
   @ApiOperation({
     summary: 'List Repair',
   })
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  // @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
+  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN))
   @Get()
   async getAll(@Query() query: any): Promise<ResponseDTO> {
     const { limit, offset, order } = query;
@@ -125,7 +142,7 @@ export class RepairController {
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
+  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN))
   @Get(':id')
   async get(@Param() param: FilterIdDTO): Promise<ResponseDTO> {
     const { id } = param;

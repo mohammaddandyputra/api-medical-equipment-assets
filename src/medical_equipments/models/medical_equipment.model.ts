@@ -10,6 +10,9 @@ import {
   Scopes,
   Table,
 } from 'sequelize-typescript';
+import { Complain } from 'src/complains/models/complain.model';
+import { Maintenance } from 'src/maintenances/models/maintenance.model';
+import { Repair } from 'src/repairs/models/repair.model';
 import { Room } from 'src/rooms/models/room.model';
 import { MedicalEquipmentAccessories } from './medical_equipment_accessories.model';
 
@@ -32,6 +35,24 @@ import { MedicalEquipmentAccessories } from './medical_equipment_accessories.mod
     include: {
       model: MedicalEquipmentAccessories,
       as: 'accessories',
+    },
+  },
+  withMaintenances: {
+    include: {
+      model: Maintenance,
+      as: 'maintenances',
+    },
+  },
+  withComplains: {
+    include: {
+      model: Complain,
+      as: 'complains',
+    },
+  },
+  withRepairs: {
+    include: {
+      model: Repair,
+      as: 'repairs',
     },
   },
 }))
@@ -78,11 +99,20 @@ export class MedicalEquipment extends Model {
   procurement_date: Date;
 
   @Column
-  operating_year: Date;
+  operating_year: string;
 
   @BelongsTo(() => Room, 'room_id')
   room?: Partial<Room>;
 
   @HasMany(() => MedicalEquipmentAccessories, 'medical_equipment_id')
   accessories: MedicalEquipmentAccessories[];
+
+  @HasMany(() => Maintenance, 'medical_equipment_id')
+  maintenances: Maintenance[];
+
+  @HasMany(() => Complain, 'medical_equipment_id')
+  complains: Complain[];
+
+  @HasMany(() => Repair, 'medical_equipment_id')
+  repairs: Repair[];
 }

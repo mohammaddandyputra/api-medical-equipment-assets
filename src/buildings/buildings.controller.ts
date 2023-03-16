@@ -92,12 +92,12 @@ export class BuildingController {
   @ApiOperation({
     summary: 'List Building',
   })
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  // @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
+  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN))
   @Get()
   async getAll(@Query() query: any): Promise<ResponseDTO> {
     const { limit, offset, order } = query;

@@ -7,7 +7,7 @@ export class CreateMaintenanceDTO {
   })
   @IsUUID()
   @IsNotEmpty()
-  medical_equipment: string;
+  medical_equipment_id: string;
 
   @ApiProperty({
     description: 'user id',
@@ -53,7 +53,7 @@ export class UpdateMaintenanceDTO {
     description: 'medical equipment id',
   })
   @IsUUID()
-  medical_equipment: string;
+  medical_equipment_id: string;
 
   @ApiPropertyOptional({
     description: 'user id',

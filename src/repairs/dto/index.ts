@@ -10,19 +10,6 @@ export class CreateRepairDTO {
   complain_id: string;
 
   @ApiProperty({
-    description: 'user id',
-  })
-  @IsUUID()
-  @IsNotEmpty()
-  user_id: string;
-
-  @ApiProperty({
-    description: 'repair date',
-  })
-  @IsNotEmpty()
-  repair_date: Date;
-
-  @ApiProperty({
     description: 'condition',
   })
   @IsNotEmpty()
@@ -39,23 +26,12 @@ export class UpdateRepairDTO {
     description: 'complain id',
   })
   @IsUUID()
-  complain_id: string;
-
-  @ApiPropertyOptional({
-    description: 'user id',
-  })
-  @IsUUID()
-  user_id: string;
-
-  @ApiPropertyOptional({
-    description: 'repair date',
-  })
-  repair_date: Date;
+  complain_id?: string;
 
   @ApiPropertyOptional({
     description: 'condition',
   })
-  condition: string;
+  condition?: string;
 
   @ApiPropertyOptional({
     description: 'note',

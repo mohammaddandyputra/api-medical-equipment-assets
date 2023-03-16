@@ -21,15 +21,19 @@ import {
 } from '@nestjs/swagger';
 import { FilterIdDTO, ResponseDTO } from 'src/common/dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { UserRole } from 'src/common/enums';
+import { Condition, UserRole } from 'src/common/enums';
 import { RoleGuard } from '../common/guards/role.guard';
 import { CreateMaintenanceDTO, UpdateMaintenanceDTO } from './dto';
 import { MaintenanceService } from './maintenances.service';
+import { MedicalEquipmentService } from 'src/medical_equipments/medical_equipments.service';
 
 @ApiTags('maintenances')
 @Controller('maintenances')
 export class MaintenanceController {
-  constructor(private readonly maintenanceService: MaintenanceService) {}
+  constructor(
+    private readonly maintenanceService: MaintenanceService,
+    private readonly medicalEquipmentService: MedicalEquipmentService,
+  ) {}
 
   @ApiOperation({
     summary: 'Create Maintenance',
@@ -39,15 +43,26 @@ export class MaintenanceController {
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
+  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN))
   @Post()
   async create(@Body() body: CreateMaintenanceDTO): Promise<ResponseDTO> {
+    const { medical_equipment_id, condition } = body;
     const data = await this.maintenanceService.create(
       {
         ...body,
       },
       ['withoutTimestamp'],
     );
+
+    if (
+      condition === Condition.RUSAK_RINGAN ||
+      condition === Condition.RUSAK_BERAT
+    ) {
+      await this.medicalEquipmentService.update(
+        { condition },
+        { where: { id: medical_equipment_id } },
+      );
+    }
 
     return {
       statusCode: HttpStatus.CREATED,
@@ -92,12 +107,12 @@ export class MaintenanceController {
   @ApiOperation({
     summary: 'List Maintenance',
   })
-  // @ApiBearerAuth()
+  @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  // @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
+  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN))
   @Get()
   async getAll(@Query() query: any): Promise<ResponseDTO> {
     const { limit, offset, order } = query;

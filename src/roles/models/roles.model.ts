@@ -13,7 +13,7 @@ import { User } from 'src/users/models/user.model';
 @Scopes(() => ({
   withoutTimestamp: {
     attributes: {
-      exclude: ['created_at', 'updated_at', 'deleted_at'],
+      exclude: ['createdAt', 'updatedAt', 'deletedAt'],
     },
   },
 }))
