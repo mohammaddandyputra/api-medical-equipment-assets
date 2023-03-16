@@ -28,7 +28,7 @@ import { Complain } from 'src/complains/models/complain.model';
           cb(null, target);
         },
         filename: (_req, file, cb) => {
-          const filename = `medical-${Date.now()}-${crypto
+          const filename = `ME-${Date.now()}-${crypto
             .randomBytes(16)
             .toString('hex')}${extname(file.originalname)}`;
           cb(null, filename);

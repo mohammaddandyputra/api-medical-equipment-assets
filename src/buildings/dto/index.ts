@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional, Max } from 'class-validator';
 
 export class CreateBuildingDTO {
   @ApiProperty({
@@ -16,6 +16,7 @@ export class CreateBuildingDTO {
   @ApiPropertyOptional({
     description: 'operating year',
   })
+  @Max(4)
   operating_year?: string;
 
   @ApiPropertyOptional({
@@ -49,6 +50,7 @@ export class UpdateBuildingDTO {
   @ApiPropertyOptional({
     description: 'operating year',
   })
+  @Max(4)
   operating_year?: string;
 
   @ApiPropertyOptional({

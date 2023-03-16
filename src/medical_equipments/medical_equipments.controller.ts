@@ -8,7 +8,9 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -25,6 +27,7 @@ import { UserRole } from 'src/common/enums';
 import { RoleGuard } from '../common/guards/role.guard';
 import { CreateMedicalEquipmentDTO, UpdateMedicalEquipmentDTO } from './dto';
 import { MedicalEquipmentService } from './medical_equipments.service';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('medical equipments')
 @Controller('medical_equipments')
@@ -34,19 +37,30 @@ export class MedicalEquipmentController {
   ) {}
 
   @ApiOperation({
-    summary: 'Create Room',
+    summary: 'Create Medical Equipment',
   })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
+  @UseGuards(
+    JwtAuthGuard,
+    RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN, UserRole.USER),
+  )
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'image', maxCount: 1 }]))
   @Post()
-  async create(@Body() body: CreateMedicalEquipmentDTO): Promise<ResponseDTO> {
+  async create(
+    @Body() body: CreateMedicalEquipmentDTO,
+    @UploadedFiles()
+    files: {
+      image: Express.Multer.File[];
+    },
+  ): Promise<ResponseDTO> {
     const data = await this.medicalEquipmentService.create(
       {
         ...body,
+        image_path: files.image?.[0]?.path,
       },
       ['withoutTimestamp'],
     );
@@ -58,14 +72,17 @@ export class MedicalEquipmentController {
   }
 
   @ApiOperation({
-    summary: 'Update Room',
+    summary: 'Update Medical Equipment',
   })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
+  @UseGuards(
+    JwtAuthGuard,
+    RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN, UserRole.USER),
+  )
   @Patch(':id')
   async update(
     @Param() param: FilterIdDTO,
@@ -99,7 +116,10 @@ export class MedicalEquipmentController {
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN))
+  @UseGuards(
+    JwtAuthGuard,
+    RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN, UserRole.TECHNICIAN),
+  )
   @Get()
   async getAll(@Query() query: any): Promise<ResponseDTO> {
     const { limit, offset, order } = query;
@@ -110,13 +130,7 @@ export class MedicalEquipmentController {
         offset,
         order,
       },
-      [
-        'withoutTimestamp',
-        'withAccessories',
-        'withMaintenances',
-        'withComplains',
-        'withRepairs',
-      ],
+      ['withoutTimestamp', 'withRoom'],
     );
 
     return {
@@ -133,7 +147,10 @@ export class MedicalEquipmentController {
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.USER))
+  @UseGuards(
+    JwtAuthGuard,
+    RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN, UserRole.USER),
+  )
   @Get(':id')
   async get(@Param() param: FilterIdDTO): Promise<ResponseDTO> {
     const { id } = param;
@@ -144,7 +161,14 @@ export class MedicalEquipmentController {
           id,
         },
       },
-      ['withoutTimestamp', 'withRoom'],
+      [
+        'withoutTimestamp',
+        'withRoom',
+        'withAccessories',
+        'withMaintenances',
+        'withComplains',
+        'withRepairs',
+      ],
     );
 
     if (!data) {

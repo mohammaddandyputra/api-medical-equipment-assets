@@ -101,6 +101,9 @@ export class MedicalEquipment extends Model {
   @Column
   operating_year: string;
 
+  @Column
+  image_path: string;
+
   @BelongsTo(() => Room, 'room_id')
   room?: Partial<Room>;
 

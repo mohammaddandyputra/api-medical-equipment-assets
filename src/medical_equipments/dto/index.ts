@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsUUID, Max } from 'class-validator';
 
 export class CreateMedicalEquipmentDTO {
   @ApiProperty({
@@ -60,6 +60,11 @@ export class CreateMedicalEquipmentDTO {
     description: 'operating year',
   })
   operating_year?: string;
+
+  @ApiPropertyOptional({
+    description: 'image path',
+  })
+  image?: string;
 }
 
 export class UpdateMedicalEquipmentDTO {
@@ -119,4 +124,9 @@ export class UpdateMedicalEquipmentDTO {
     description: 'operating year',
   })
   operating_year?: string;
+
+  @ApiPropertyOptional({
+    description: 'image path',
+  })
+  image?: string;
 }
