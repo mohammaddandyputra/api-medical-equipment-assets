@@ -14,7 +14,8 @@ import { BuildingsModule } from './buildings/buildings.module';
 import { Room } from './rooms/models/room.model';
 import { RoomModule } from './rooms/rooms.module';
 import { MedicalEquipment } from './medical_equipments/models/medical_equipment.model';
-import { MedicalEquipmentAccessories } from './medical_equipments/models/medical_equipment_accessories.model';
+import { MedicalEquipmentAccessories } from './medical_equipment_accessories/models/medical_equipment_accessories.model';
+import { MedicalEquipmentAccessoriesModule } from './medical_equipment_accessories/medical_equipment_accessories.module';
 import { MedicalEquipmentModule } from './medical_equipments/medical_equipments.module';
 import { Complain } from './complains/models/complain.model';
 import { ComplainModule } from './complains/complains.module';
@@ -61,6 +62,7 @@ import { MaintenanceModule } from './maintenances/maintenances.module';
     UserModule,
     BuildingsModule,
     RoomModule,
+    MedicalEquipmentAccessoriesModule,
     MedicalEquipmentModule,
     ComplainModule,
     RepairModule,

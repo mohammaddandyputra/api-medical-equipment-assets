@@ -19,6 +19,11 @@ export class CreateRepairDTO {
     description: 'note',
   })
   note?: string;
+
+  @ApiPropertyOptional({
+    description: 'image path',
+  })
+  image?: string;
 }
 
 export class UpdateRepairDTO {
@@ -37,4 +42,9 @@ export class UpdateRepairDTO {
     description: 'note',
   })
   note?: string;
+
+  @ApiPropertyOptional({
+    description: 'image path',
+  })
+  image?: string;
 }

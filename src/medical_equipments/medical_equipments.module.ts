@@ -6,11 +6,12 @@ import { mkdirSync } from 'fs';
 import * as crypto from 'crypto';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { MedicalEquipment } from './models/medical_equipment.model';
-import { MedicalEquipmentAccessories } from './models/medical_equipment_accessories.model';
+import { MedicalEquipmentAccessories } from 'src/medical_equipment_accessories/models/medical_equipment_accessories.model';
 import { MedicalEquipmentService } from './medical_equipments.service';
 import { MedicalEquipmentController } from './medical_equipments.controller';
 import { Maintenance } from 'src/maintenances/models/maintenance.model';
 import { Complain } from 'src/complains/models/complain.model';
+import { UserModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { Complain } from 'src/complains/models/complain.model';
     MulterModule.register({
       storage: diskStorage({
         destination: (_req, _file, cb) => {
-          const target = join('upload');
+          const target = join('uploads');
           mkdirSync(target, { recursive: true });
           cb(null, target);
         },
@@ -35,6 +36,7 @@ import { Complain } from 'src/complains/models/complain.model';
         },
       }),
     }),
+    UserModule,
   ],
   controllers: [MedicalEquipmentController],
   providers: [MedicalEquipmentService],

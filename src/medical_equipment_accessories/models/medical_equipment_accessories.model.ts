@@ -1,15 +1,12 @@
 import {
-  BelongsTo,
   Column,
   DataType,
   Default,
-  ForeignKey,
   Model,
   PrimaryKey,
   Scopes,
   Table,
 } from 'sequelize-typescript';
-import { MedicalEquipment } from './medical_equipment.model';
 
 @Scopes(() => ({
   withoutTimestamp: {
@@ -29,7 +26,7 @@ export class MedicalEquipmentAccessories extends Model {
   @Column(DataType.UUID)
   id: string;
 
-  @ForeignKey(() => MedicalEquipment)
+  // @ForeignKey(() => MedicalEquipment)
   @Column(DataType.UUID)
   medical_equipment_id: string;
 
@@ -43,8 +40,11 @@ export class MedicalEquipmentAccessories extends Model {
   type: string;
 
   @Column
+  sn: string;
+
+  @Column
   purchase_price: number;
 
-  @BelongsTo(() => MedicalEquipment, 'medical_equipment_id')
-  accessories: MedicalEquipment;
+  @Column
+  image_path: string;
 }

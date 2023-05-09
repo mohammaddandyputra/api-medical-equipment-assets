@@ -20,11 +20,13 @@ import { LoginDTO, RegisterDTO } from './dto';
 import * as bcrypt from 'bcrypt';
 import * as JWT from 'jsonwebtoken';
 import * as _ from 'lodash';
+import { Utils } from 'src/common/utils';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private userService: UserService) {}
+  private util = new Utils();
 
   @ApiOperation({
     summary: 'Auth Login',
@@ -57,7 +59,11 @@ export class AuthController {
 
     return {
       statusCode: HttpStatus.OK,
-      data: { user: userData, token },
+      data: {
+        user: userData,
+        expired_token: this.util.addOneDay(new Date()).toString(),
+        token,
+      },
     };
   }
 

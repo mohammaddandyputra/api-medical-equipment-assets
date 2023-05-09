@@ -1,8 +1,10 @@
 import {
+  BelongsTo,
   Column,
   DataType,
   Default,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Scopes,
@@ -10,11 +12,24 @@ import {
 } from 'sequelize-typescript';
 import { User } from 'src/users/models/user.model';
 import { MedicalEquipment } from 'src/medical_equipments/models/medical_equipment.model';
+import { MaintenanceAction } from './maintenance_actions.model';
 
 @Scopes(() => ({
   withoutTimestamp: {
     attributes: {
       exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+    },
+  },
+  withUser: {
+    include: {
+      model: User.scope(['withoutTimestamp']),
+      as: 'user',
+    },
+  },
+  withActions: {
+    include: {
+      model: MaintenanceAction, // .scope(['withoutTimestamp'])
+      as: 'actions',
     },
   },
 }))
@@ -54,4 +69,12 @@ export class Maintenance extends Model {
 
   @Column
   note: string;
+
+  @BelongsTo(() => User, 'user_id')
+  user?: Partial<User>;
+
+  @HasMany(() => MaintenanceAction, 'maintenance_id')
+  actions: MaintenanceAction[];
+
+  image_path: string;
 }

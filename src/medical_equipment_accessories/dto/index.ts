@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsUUID, Max } from 'class-validator';
+import { IsNotEmpty, IsUUID, Max } from 'class-validator';
 
-export class CreateMedicalEquipmentDTO {
+export class CreateMedicalEquipmentAccessoriesDTO {
   @ApiProperty({
     description: 'room id',
   })
@@ -67,7 +67,7 @@ export class CreateMedicalEquipmentDTO {
   image?: string;
 }
 
-export class UpdateMedicalEquipmentDTO {
+export class UpdateMedicalEquipmentAccessoriesDTO {
   @ApiPropertyOptional({
     description: 'room id',
   })
@@ -129,12 +129,4 @@ export class UpdateMedicalEquipmentDTO {
     description: 'image path',
   })
   image?: string;
-}
-export class FilterRoomIdDTO {
-  @ApiProperty({
-    description: 'room id',
-  })
-  @IsUUID()
-  @IsNotEmpty()
-  room_id: string;
 }

@@ -24,6 +24,11 @@ export class CreateRoomDTO {
     description: 'room area',
   })
   room_area?: number;
+
+  @ApiPropertyOptional({
+    description: 'image path',
+  })
+  image?: string;
 }
 
 export class UpdateRoomDTO {
@@ -47,4 +52,9 @@ export class UpdateRoomDTO {
     description: 'room area',
   })
   room_area?: number;
+
+  @ApiPropertyOptional({
+    description: 'image path',
+  })
+  image?: string;
 }

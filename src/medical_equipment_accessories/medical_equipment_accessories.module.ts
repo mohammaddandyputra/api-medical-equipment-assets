@@ -5,16 +5,14 @@ import { extname, join } from 'path';
 import { mkdirSync } from 'fs';
 import * as crypto from 'crypto';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Maintenance } from './models/maintenance.model';
-import { MaintenanceService } from './maintenances.service';
-import { MaintenanceController } from './maintenances.controller';
-import { MedicalEquipmentModule } from 'src/medical_equipments/medical_equipments.module';
-import { MaintenanceAction } from './models/maintenance_actions.model';
+import { MedicalEquipmentAccessories } from './models/medical_equipment_accessories.model';
+import { MedicalEquipmentAccessoriesService } from './medical_equipment_accessories.service';
+import { MedicalEquipmentAccessoriesController } from './medical_equipment_accessories.controller';
+import { UserModule } from 'src/users/users.module';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Maintenance, MaintenanceAction]),
-    MedicalEquipmentModule,
+    SequelizeModule.forFeature([MedicalEquipmentAccessories]),
     MulterModule.register({
       storage: diskStorage({
         destination: (_req, _file, cb) => {
@@ -23,7 +21,7 @@ import { MaintenanceAction } from './models/maintenance_actions.model';
           cb(null, target);
         },
         filename: (_req, file, cb) => {
-          const filename = `M-${Date.now()}-${crypto
+          const filename = `MEA-${Date.now()}-${crypto
             .randomBytes(16)
             .toString('hex')}${extname(file.originalname)}`;
           cb(null, filename);
@@ -31,8 +29,8 @@ import { MaintenanceAction } from './models/maintenance_actions.model';
       }),
     }),
   ],
-  controllers: [MaintenanceController],
-  providers: [MaintenanceService],
-  exports: [MaintenanceService],
+  controllers: [MedicalEquipmentAccessoriesController],
+  providers: [MedicalEquipmentAccessoriesService],
+  exports: [MedicalEquipmentAccessoriesService],
 })
-export class MaintenanceModule {}
+export class MedicalEquipmentAccessoriesModule {}

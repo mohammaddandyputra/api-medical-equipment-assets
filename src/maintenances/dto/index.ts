@@ -9,19 +9,6 @@ export class CreateMaintenanceDTO {
   @IsNotEmpty()
   medical_equipment_id: string;
 
-  @ApiProperty({
-    description: 'user id',
-  })
-  @IsUUID()
-  @IsNotEmpty()
-  user_id: string;
-
-  @ApiProperty({
-    description: 'maintenance date',
-  })
-  @IsNotEmpty()
-  maintenance_date: Date;
-
   @ApiPropertyOptional({
     description: 'temperature',
   })
@@ -46,6 +33,11 @@ export class CreateMaintenanceDTO {
     description: 'note',
   })
   note?: string;
+
+  @ApiPropertyOptional({
+    description: 'image path',
+  })
+  image?: string;
 }
 
 export class UpdateMaintenanceDTO {
@@ -56,17 +48,6 @@ export class UpdateMaintenanceDTO {
   medical_equipment_id: string;
 
   @ApiPropertyOptional({
-    description: 'user id',
-  })
-  @IsUUID()
-  user_id: string;
-
-  @ApiPropertyOptional({
-    description: 'maintenance date',
-  })
-  maintenance_date: Date;
-
-  @ApiPropertyOptional({
     description: 'temperature',
   })
   temperature?: string;
@@ -90,4 +71,9 @@ export class UpdateMaintenanceDTO {
     description: 'note',
   })
   note?: string;
+
+  @ApiPropertyOptional({
+    description: 'image path',
+  })
+  image?: string;
 }

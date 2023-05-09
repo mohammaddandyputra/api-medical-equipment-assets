@@ -15,3 +15,8 @@ export enum UserStatus {
   ACCEPT = 'accept',
   REJECT = 'reject',
 }
+
+export enum ComplainStatus {
+  PENDING = 'PENDING',
+  DONE = 'DONE',
+}

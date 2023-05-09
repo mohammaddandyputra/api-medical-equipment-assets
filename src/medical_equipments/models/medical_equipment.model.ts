@@ -14,7 +14,8 @@ import { Complain } from 'src/complains/models/complain.model';
 import { Maintenance } from 'src/maintenances/models/maintenance.model';
 import { Repair } from 'src/repairs/models/repair.model';
 import { Room } from 'src/rooms/models/room.model';
-import { MedicalEquipmentAccessories } from './medical_equipment_accessories.model';
+import { MedicalEquipmentAccessories } from 'src/medical_equipment_accessories/models/medical_equipment_accessories.model';
+import { User } from 'src/users/models/user.model';
 
 @Scopes(() => ({
   withoutTimestamp: {
@@ -39,19 +40,19 @@ import { MedicalEquipmentAccessories } from './medical_equipment_accessories.mod
   },
   withMaintenances: {
     include: {
-      model: Maintenance,
+      model: Maintenance, // .scope(['withUser'])
       as: 'maintenances',
     },
   },
   withComplains: {
     include: {
-      model: Complain,
+      model: Complain, // .scope(['withUser'])
       as: 'complains',
     },
   },
   withRepairs: {
     include: {
-      model: Repair,
+      model: Repair, // .scope(['withUser'])
       as: 'repairs',
     },
   },

@@ -136,7 +136,7 @@ export class BuildingController {
           id,
         },
       },
-      ['withoutTimestamp'],
+      ['withoutTimestamp', 'withFloor'],
     );
 
     if (!data) {

@@ -53,4 +53,7 @@ export class Room extends Model {
 
   @BelongsTo(() => BuildingFloor, 'floor_id')
   floor: BuildingFloor;
+
+  @Column
+  image_path: string;
 }

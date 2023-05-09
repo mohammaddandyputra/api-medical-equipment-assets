@@ -20,6 +20,9 @@ import { BuildingFloor } from './building_floor.model';
     include: {
       model: BuildingFloor,
       as: 'floors',
+      attributes: {
+        exclude: ['createdAt', 'updatedAt', 'deletedAt'],
+      },
     },
   },
 }))
@@ -51,6 +54,9 @@ export class Building extends Model {
 
   @Column
   source_of_funds: string;
+
+  @Column
+  image_path: string;
 
   @HasMany(() => BuildingFloor, 'building_id')
   floors: BuildingFloor[];

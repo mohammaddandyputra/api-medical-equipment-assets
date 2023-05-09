@@ -76,6 +76,8 @@ export class User extends Model {
   @BelongsTo(() => Role, 'role_id')
   role?: Partial<Role>;
 
+  user?: any;
+
   comparePasswordSync(password: string): boolean {
     return bcrypt.compareSync(password, this.password);
   }

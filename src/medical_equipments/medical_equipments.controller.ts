@@ -25,15 +25,21 @@ import { FilterIdDTO, ResponseDTO } from 'src/common/dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserRole } from 'src/common/enums';
 import { RoleGuard } from '../common/guards/role.guard';
-import { CreateMedicalEquipmentDTO, UpdateMedicalEquipmentDTO } from './dto';
+import {
+  CreateMedicalEquipmentDTO,
+  FilterRoomIdDTO,
+  UpdateMedicalEquipmentDTO,
+} from './dto';
 import { MedicalEquipmentService } from './medical_equipments.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { UserService } from 'src/users/users.service';
 
 @ApiTags('medical equipments')
 @Controller('medical_equipments')
 export class MedicalEquipmentController {
   constructor(
     private readonly medicalEquipmentService: MedicalEquipmentService,
+    private readonly userService: UserService,
   ) {}
 
   @ApiOperation({
@@ -160,6 +166,12 @@ export class MedicalEquipmentController {
         where: {
           id,
         },
+        order: [
+          ['accessories', 'name', 'ASC'],
+          ['maintenances', 'maintenance_date', 'DESC'],
+          ['complains', 'complain_date', 'DESC'],
+          ['repairs', 'repair_date', 'DESC'],
+        ],
       },
       [
         'withoutTimestamp',
@@ -170,6 +182,38 @@ export class MedicalEquipmentController {
         'withRepairs',
       ],
     );
+
+    if (!data) {
+      throw new NotFoundException('Medical equipment not found!');
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      data,
+    };
+  }
+
+  @ApiOperation({
+    summary: 'Get All Medical Equipment By Room',
+  })
+  @ApiBearerAuth()
+  @ApiOkResponse({ description: 'The request has succeeded' })
+  @ApiBadRequestResponse({ description: 'The request was invalid' })
+  @ApiNotFoundResponse({ description: 'The request was not found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
+  @UseGuards(
+    JwtAuthGuard,
+    RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN, UserRole.USER),
+  )
+  @Get('room/:room_id')
+  async getByRoom(@Param() param: FilterRoomIdDTO): Promise<ResponseDTO> {
+    const { room_id } = param;
+
+    const data = await this.medicalEquipmentService.getAll({
+      where: {
+        room_id,
+      },
+    });
 
     if (!data) {
       throw new NotFoundException('Medical equipment not found!');

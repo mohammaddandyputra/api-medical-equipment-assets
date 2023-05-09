@@ -26,6 +26,8 @@ import { RoleGuard } from '../common/guards/role.guard';
 import { CreateMaintenanceDTO, UpdateMaintenanceDTO } from './dto';
 import { MaintenanceService } from './maintenances.service';
 import { MedicalEquipmentService } from 'src/medical_equipments/medical_equipments.service';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import moment from 'moment';
 
 @ApiTags('maintenances')
 @Controller('maintenances')
@@ -45,11 +47,16 @@ export class MaintenanceController {
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN))
   @Post()
-  async create(@Body() body: CreateMaintenanceDTO): Promise<ResponseDTO> {
+  async create(
+    @Body() body: CreateMaintenanceDTO,
+    @CurrentUser() user: any,
+  ): Promise<ResponseDTO> {
     const { medical_equipment_id, condition } = body;
     const data = await this.maintenanceService.create(
       {
         ...body,
+        user_id: user.id,
+        maintenance_date: new Date(moment().format()),
       },
       ['withoutTimestamp'],
     );
@@ -123,7 +130,7 @@ export class MaintenanceController {
         offset,
         order,
       },
-      ['withoutTimestamp'],
+      ['withoutTimestamp', 'withUser'],
     );
 
     return {
@@ -151,7 +158,7 @@ export class MaintenanceController {
           id,
         },
       },
-      ['withoutTimestamp'],
+      ['withoutTimestamp', 'withUser', 'withActions'],
     );
 
     if (!data) {

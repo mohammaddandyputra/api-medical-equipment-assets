@@ -8,7 +8,9 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -23,45 +25,45 @@ import { FilterIdDTO, ResponseDTO } from 'src/common/dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserRole } from 'src/common/enums';
 import { RoleGuard } from '../common/guards/role.guard';
-import { CreateRepairDTO, UpdateRepairDTO } from './dto';
-import { RepairService } from './repairs.service';
-import * as moment from 'moment';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { ComplainService } from 'src/complains/complains.service';
+import {
+  CreateMedicalEquipmentAccessoriesDTO,
+  UpdateMedicalEquipmentAccessoriesDTO,
+} from './dto';
+import { MedicalEquipmentAccessoriesService } from './medical_equipment_accessories.service';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
-@ApiTags('repairs')
-@Controller('repairs')
-export class RepairController {
+@ApiTags('medical equipment accessories')
+@Controller('medical_equipment_accessories')
+export class MedicalEquipmentAccessoriesController {
   constructor(
-    private readonly repairService: RepairService,
-    private readonly complainService: ComplainService,
+    private readonly medicalEquipmentAccessoriesService: MedicalEquipmentAccessoriesService,
   ) {}
 
   @ApiOperation({
-    summary: 'Create Repair',
+    summary: 'Create Medical Equipment Accessories',
   })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN))
+  @UseGuards(
+    JwtAuthGuard,
+    RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN, UserRole.USER),
+  )
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'image', maxCount: 1 }]))
   @Post()
   async create(
-    @Body() body: CreateRepairDTO,
-    @CurrentUser() user: any,
+    @Body() body: CreateMedicalEquipmentAccessoriesDTO,
+    @UploadedFiles()
+    files: {
+      image: Express.Multer.File[];
+    },
   ): Promise<ResponseDTO> {
-    const { complain_id } = body;
-    const complain = await this.complainService.get({
-      where: { id: complain_id },
-    });
-
-    const data = await this.repairService.create(
+    const data = await this.medicalEquipmentAccessoriesService.create(
       {
         ...body,
-        medical_equipment_id: complain.medical_equipment_id,
-        user_id: user.id,
-        repair_date: new Date(moment().format()),
+        image_path: files.image?.[0]?.path,
       },
       ['withoutTimestamp'],
     );
@@ -73,22 +75,25 @@ export class RepairController {
   }
 
   @ApiOperation({
-    summary: 'Update Repair',
+    summary: 'Update Medical Equipment Accessories',
   })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN))
+  @UseGuards(
+    JwtAuthGuard,
+    RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN, UserRole.USER),
+  )
   @Patch(':id')
   async update(
     @Param() param: FilterIdDTO,
-    @Body() body: UpdateRepairDTO,
+    @Body() body: UpdateMedicalEquipmentAccessoriesDTO,
   ): Promise<ResponseDTO> {
     const { id } = param;
 
-    const data = await this.repairService.update(
+    const data = await this.medicalEquipmentAccessoriesService.update(
       {
         ...body,
       },
@@ -107,25 +112,28 @@ export class RepairController {
   }
 
   @ApiOperation({
-    summary: 'List Repair',
+    summary: 'List Medical Equipment Accessories',
   })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN))
+  @UseGuards(
+    JwtAuthGuard,
+    RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN, UserRole.TECHNICIAN),
+  )
   @Get()
   async getAll(@Query() query: any): Promise<ResponseDTO> {
     const { limit, offset, order } = query;
 
-    const data = await this.repairService.getAll(
+    const data = await this.medicalEquipmentAccessoriesService.getAll(
       {
         limit,
         offset,
         order,
       },
-      ['withoutTimestamp', 'withComplain', 'withUser'],
+      ['withoutTimestamp'],
     );
 
     return {
@@ -135,29 +143,32 @@ export class RepairController {
   }
 
   @ApiOperation({
-    summary: 'Get Repair',
+    summary: 'Get Medical Equipment Accessories',
   })
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'The request has succeeded' })
   @ApiBadRequestResponse({ description: 'The request was invalid' })
   @ApiNotFoundResponse({ description: 'The request was not found' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard, RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN))
+  @UseGuards(
+    JwtAuthGuard,
+    RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN, UserRole.USER),
+  )
   @Get(':id')
   async get(@Param() param: FilterIdDTO): Promise<ResponseDTO> {
     const { id } = param;
 
-    const data = await this.repairService.get(
+    const data = await this.medicalEquipmentAccessoriesService.get(
       {
         where: {
           id,
         },
       },
-      ['withoutTimestamp', 'withComplain', 'withActions', 'withUser'],
+      ['withoutTimestamp'],
     );
 
     if (!data) {
-      throw new NotFoundException('Complain not found!');
+      throw new NotFoundException('Medical equipment accessories not found!');
     }
 
     return {

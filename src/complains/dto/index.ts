@@ -19,6 +19,17 @@ export class CreateComplainDTO {
     description: 'note',
   })
   note?: string;
+
+  @ApiPropertyOptional({
+    description: 'image path',
+  })
+  image?: string;
+
+  @ApiProperty({
+    description: 'medical equipment condition',
+  })
+  @IsNotEmpty()
+  condition: string;
 }
 
 export class UpdateComplainDTO {
@@ -37,4 +48,14 @@ export class UpdateComplainDTO {
     description: 'note',
   })
   note?: string;
+
+  @ApiPropertyOptional({
+    description: 'image path',
+  })
+  image?: string;
+
+  @ApiPropertyOptional({
+    description: 'medical equipment condition',
+  })
+  condition?: string;
 }

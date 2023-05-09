@@ -33,6 +33,11 @@ export class CreateBuildingDTO {
     description: 'source of funds',
   })
   source_of_funds?: string;
+
+  @ApiPropertyOptional({
+    description: 'image path',
+  })
+  image?: string;
 }
 
 export class UpdateBuildingDTO {
@@ -67,4 +72,9 @@ export class UpdateBuildingDTO {
     description: 'source of funds',
   })
   source_of_funds?: string;
+
+  @ApiPropertyOptional({
+    description: 'image path',
+  })
+  image?: string;
 }
