@@ -43,11 +43,13 @@ export class PaginationDTO {
   @IsNotEmpty()
   offset?: number;
 }
+
 export class FilterDTO {
   @ApiProperty({
     type: String,
     description: 'keyword for search',
   })
+  @IsNotEmpty()
   keyword: string;
 
   @ApiPropertyOptional({
