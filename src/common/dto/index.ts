@@ -43,6 +43,20 @@ export class PaginationDTO {
   @IsNotEmpty()
   offset?: number;
 }
+export class FilterDTO {
+  @ApiProperty({
+    type: String,
+    description: 'keyword for search',
+  })
+  keyword: string;
+
+  @ApiPropertyOptional({
+    type: String,
+    description: 'Filter ex: name:test',
+  })
+  @IsOptional()
+  filter?: string;
+}
 
 export class ResponseDTO {
   statusCode: number;

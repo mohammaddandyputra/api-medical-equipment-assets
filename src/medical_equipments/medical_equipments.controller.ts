@@ -21,7 +21,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { FilterIdDTO, ResponseDTO } from 'src/common/dto';
+import { FilterIdDTO, ResponseDTO, FilterDTO } from 'src/common/dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserRole } from 'src/common/enums';
 import { RoleGuard } from '../common/guards/role.guard';
@@ -33,6 +33,8 @@ import {
 import { MedicalEquipmentService } from './medical_equipments.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UserService } from 'src/users/users.service';
+import sequelize from 'sequelize';
+import { Utils } from 'src/common/utils';
 
 @ApiTags('medical equipments')
 @Controller('medical_equipments')
@@ -41,6 +43,7 @@ export class MedicalEquipmentController {
     private readonly medicalEquipmentService: MedicalEquipmentService,
     private readonly userService: UserService,
   ) {}
+  private util = new Utils();
 
   @ApiOperation({
     summary: 'Create Medical Equipment',
@@ -127,17 +130,39 @@ export class MedicalEquipmentController {
     RoleGuard(UserRole.ADMIN, UserRole.TECHNICIAN, UserRole.TECHNICIAN),
   )
   @Get()
-  async getAll(@Query() query: any): Promise<ResponseDTO> {
-    const { limit, offset, order } = query;
+  async getAll(@Query() query: FilterDTO): Promise<ResponseDTO> {
+    const { keyword, filter } = query;
 
-    const data = await this.medicalEquipmentService.getAll(
-      {
-        limit,
-        offset,
-        order,
-      },
-      ['withoutTimestamp', 'withRoom'],
-    );
+    let data;
+
+    if (filter) {
+      data = await this.medicalEquipmentService.getAll(
+        {
+          where: {
+            [sequelize.Op.and]: [
+              {
+                name: {
+                  [sequelize.Op.iLike]: `%${keyword}%`,
+                },
+              },
+              this.util.multipleWhereClause(filter),
+            ],
+          },
+        },
+        ['withoutTimestamp', 'withRoom'],
+      );
+    } else {
+      data = await this.medicalEquipmentService.getAll(
+        {
+          where: {
+            name: {
+              [sequelize.Op.iLike]: `%${keyword}%`,
+            },
+          },
+        },
+        ['withoutTimestamp', 'withRoom'],
+      );
+    }
 
     return {
       statusCode: HttpStatus.OK,

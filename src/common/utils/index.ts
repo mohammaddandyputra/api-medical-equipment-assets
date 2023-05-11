@@ -24,4 +24,9 @@ export class Utils {
     }
     return code;
   }
+
+  public multipleWhereClause(filter: string): any {
+    const split = filter.split(':');
+    return { [split[0]]: [split[1]] };
+  }
 }
