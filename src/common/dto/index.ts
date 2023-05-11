@@ -45,12 +45,11 @@ export class PaginationDTO {
 }
 
 export class FilterDTO {
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: String,
     description: 'keyword for search',
   })
-  @IsNotEmpty()
-  keyword: string;
+  keyword?: string;
 
   @ApiPropertyOptional({
     type: String,
